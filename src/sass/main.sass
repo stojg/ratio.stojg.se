@@ -1,0 +1,151 @@
+//@import "https://fonts.googleapis.com/css?family=Roboto:400,400italic,700,700italic,300,300italic"
+
+//When setting the primary font stack, apply it to the Pure grid units along
+//with `html`, `button`, `input`, `select`, and `textarea`. Pure Grids use
+//specific font stacks to ensure the greatest OS/browser compatibility.*/
+html, button, input, select, textarea, .pure-g [class *= "pure-u"]
+    font-family: 'Roboto', sans-serif
+    font-size: 12px
+
+@mixin shadow($level: 1)
+    @if $level == 1
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)
+    @else if $level == 2
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
+    @else if $level == 3
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23)
+    @else if $level == 4
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22)
+    @else if $level == 5
+        box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22)
+
+body
+    background: #f0f0f0
+    font-size: 1.0em
+
+a.card, .card
+    @include shadow(1)
+
+    display: block
+    padding: 16px
+    margin: 16px
+
+    text-decoration: none
+    cursor: pointer
+
+    color: #333
+    background: #ffffff
+
+    -webkit-transition: all 0.20s
+    -moz-transition: all 0.20s
+    transition: all 0.20s
+
+    .header
+        font-size: 18px
+        letter-spacing: 1px
+
+    .note
+        padding-top: 16px
+        color: #888
+        clear: both
+        white-space: pre-line
+
+    .row
+        margin-top: 8px
+        content: " "
+        display: block
+        height: 0
+        //clear: both
+
+    .count
+        height: 26px
+        min-width: 26px
+        float: left
+        padding: 2px 2px 2px 2px
+        // .ingredient height + border size
+        line-height: 28px
+        text-align: center
+        font-weight: bold
+        font-size: 1.2em
+
+    .ingredient
+        height: 26px
+        width: 26px
+        border: 1px solid #ccc
+        background: #f7f7f7
+        float: left
+        margin: 2px
+
+        // https://icons8.com/web-app/for/all/egg
+        &.flour
+            background: url("/img/wheat.png") no-repeat center center
+            background-size: 18px 18px
+
+        &.water
+            background: url("/img/water.png") no-repeat center, center
+            background-size: 18px 18px
+
+        &.liquid
+            background: url("/img/water.png") no-repeat center, center
+            background-size: 18px 18px
+
+        &.vinegar
+            background: url("/img/water.png") no-repeat center, center
+            background-size: 18px 18px
+
+        &.fat
+            background: url("/img/oil.png") no-repeat center, center
+            background-size: 18px 18px
+
+        &.oil
+            background: url("/img/oil.png") no-repeat center, center
+            background-size: 18px 18px
+
+        &.butter
+            background: url("/img/oil.png") no-repeat center, center
+            background-size: 18px 18px
+
+        &.egg
+            background: url("/img/eggs.png") no-repeat center, center
+            background-size: 18px 18px
+
+        &.yolk
+            background: url("/img/eggs.png") no-repeat center, center
+            background-size: 18px 18px
+
+        &.sugar
+            background: url("/img/sugar.png") no-repeat center, center
+            background-size: 18px 18px
+
+    &:hover
+        @include shadow(2)
+
+        -ms-transform: translate(0px, -3px)
+        -webkit-transform: translate(0px, -3px)
+        transform: translate(0px, -3px)
+
+    &:after
+        content: " "
+        display: block
+        height: 0
+        clear: both
+
+    &.teal
+        border: solid #4DB6AC 0
+        border-left-width: 4px
+
+    &.red
+        border: solid #EE6E73 0
+        border-left-width: 4px
+
+    &.yellow
+        border: solid #FCCF50 0
+        border-left-width: 4px
+
+    &.purple
+        border: solid #9C27B0 0
+        border-left-width: 4px
+
+    &.gray
+        border: solid #DDDDDD 0
+        border-left-width: 4px
