@@ -6,8 +6,11 @@ var plugins = require('gulp-load-plugins')(); // Load all gulp plugins automatic
 
 var runSequence = require('run-sequence');    // Temporary solution until gulp 4 https://github.com/gulpjs/gulp/issues/355
 
+var browserSync = require('browser-sync');
+var reload      = browserSync.reload;
+
 var pkg = require('./package.json');
-var dirs = pkg['site-configs'].directories;
+var dirs = pkg['h5bp-configs'].directories;
 
 // ---------------------------------------------------------------------
 // | Helper tasks                                                      |
@@ -62,10 +65,11 @@ gulp.task('clean', function (done) {
 gulp.task('copy', [
     'copy:.htaccess',
     'copy:index.html',
+    'copy:jquery',
     'copy:main.min.css',
     'copy:main.min.js',
     'copy:misc',
-    'copy:purecss'
+    'copy:normalize'
 ]);
 
 gulp.task('copy:.htaccess', function () {
@@ -76,7 +80,14 @@ gulp.task('copy:.htaccess', function () {
 
 gulp.task('copy:index.html', function () {
     return gulp.src(dirs.src + '/index.html')
+               .pipe(plugins.replace(/{{JQUERY_VERSION}}/g, pkg.devDependencies.jquery))
                .pipe(gulp.dest(dirs.dist));
+});
+
+gulp.task('copy:jquery', function () {
+    return gulp.src(['node_modules/jquery/dist/jquery.min.js'])
+               .pipe(plugins.rename('jquery-' + pkg.devDependencies.jquery + '.min.js'))
+               .pipe(gulp.dest(dirs.dist + '/js/vendor'));
 });
 
 gulp.task('copy:main.min.css', function () {
@@ -132,17 +143,19 @@ gulp.task('copy:html', function() {
        dirs.src + '/**/*.html'
    ], {
    })
+   .pipe(plugins.replace(/{{JQUERY_VERSION}}/g, pkg.devDependencies.jquery))
    .pipe(gulp.dest(dirs.dist));
 });
 
 gulp.task('run:html', function(done) {
     runSequence(
         'copy:html',
+        'bs-reload',
     done);
 });
 
-gulp.task('copy:purecss', function () {
-    return gulp.src('node_modules/purecss/build/pure.css')
+gulp.task('copy:normalize', function () {
+    return gulp.src('node_modules/normalize.css/normalize.css')
         .pipe(plugins.rename({ suffix: '.min' }))
         .pipe(plugins.minifyCss())
         .pipe(gulp.dest(dirs.dist + '/css'));
@@ -167,6 +180,7 @@ gulp.task('scripts', function() {
         .pipe(plugins.rename({ suffix: '.min' }))
         .pipe(plugins.uglify())
         .pipe(gulp.dest(dirs.src + '/js'))
+        .pipe(reload({ stream:true }))
         .pipe(plugins.notify({ message: 'Scripts task completed' }));
 });
 
@@ -179,13 +193,14 @@ gulp.task('compile:scripts', function(done) {
 
 // Styles
 gulp.task('styles', function() {
-    return gulp.src(dirs.src + '/sass/main.sass')
-        .pipe(plugins.sass())
+    return gulp.src(dirs.src + '/less/main.less')
+        .pipe(plugins.less())
         .pipe(plugins.autoprefixer())
         // .pipe(gulp.dest(dirs.src + '/css'))
         .pipe(plugins.rename({ suffix: '.min' }))
         .pipe(plugins.minifyCss())
         .pipe(gulp.dest(dirs.src + '/css'))
+        .pipe(reload({ stream:true }))
         .pipe(plugins.notify({ message: 'Styles task completed' }));
 });
 
@@ -194,6 +209,20 @@ gulp.task('compile:styles', function(done) {
         'styles',
         'copy:main.min.css',
     done);
+});
+
+// BrowserSync task for starting the server.
+gulp.task('browser-sync', function() {
+    browserSync.init({
+        server: {
+            baseDir: './' + dirs.dist
+        }
+    });
+});
+
+// Reload all Browsers
+gulp.task('bs-reload', function () {
+    browserSync.reload();
 });
 
 // Remove main.css + min and main.min.js from the src folder
@@ -210,8 +239,8 @@ gulp.task('clean:src', function (done) {
 
 // Watch
 gulp.task('watch', function () {
-    // Watch .sass files
-    gulp.watch(dirs.src + '/sass/**/*.sass', ['compile:styles']);
+    // Watch .less files
+    gulp.watch(dirs.src + '/less/**/*.less', ['compile:styles']);
 
     // Watch .js files
     gulp.watch(dirs.src + '/js/**/*.js', ['compile:scripts']);
@@ -244,6 +273,7 @@ gulp.task('build', function (done) {
 gulp.task('dev', function (done) {
     runSequence(
         ['watch'],
+        'browser-sync',
     done);
 });
 
